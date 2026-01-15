@@ -271,9 +271,9 @@ handleSyscall (Recv ep) state = ...
 
 ---
 
-# seL4とHSOSの関係
+# seL4とLOSの関係
 
-HaskellでHSOSを書く = seL4の「実行可能仕様」に相当
+HaskellでLOSを書く = seL4の「実行可能仕様」に相当
 
 - 純粋関数ベース → 証明が容易
 - 証明ツール（LiquidHaskell等）との連携可能
@@ -349,13 +349,13 @@ HaskellでHSOSを書く = seL4の「実行可能仕様」に相当
 
 ---
 
-# HSOSの位置づけ
+# LOSの位置づけ
 
 ```
                     証明の厳密さ
                          ↑
           seL4 ●         │
-                         │        ● HSOS (目標)
+                         │        ● LOS (目標)
        Singularity ●     │
                          │
 ─────────────────────────┼─────────→ 型システムの表現力
@@ -364,7 +364,7 @@ HaskellでHSOSを書く = seL4の「実行可能仕様」に相当
 
 ---
 
-# HSOSが目指すもの
+# LOSが目指すもの
 
 1. **Singularityの型安全性** + **seL4の証明可能性**
 2. **Kokaの代数的効果** + **Haskellのエコシステム**
@@ -382,7 +382,7 @@ HaskellでHSOSを書く = seL4の「実行可能仕様」に相当
 
 ---
 
-# HSOSの設計方針
+# LOSの設計方針
 
 - **最初から証明を意識**した言語選択（Haskell）
 - **代数的効果**でOSサービスを抽象化

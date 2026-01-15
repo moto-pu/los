@@ -4,7 +4,7 @@ theme: default
 paginate: true
 ---
 
-# HSOS - Haskell Operating System
+# LOS - Lambda Operating System
 
 λ計算を理論的基盤とした新しいOS設計パラダイムの探求
 
@@ -46,7 +46,7 @@ paginate: true
                     証明の厳密さ
                          ↑
           seL4 ●         │
-                         │        ● HSOS (目標)
+                         │        ● LOS (目標)
        Singularity ●     │
                          │
 ─────────────────────────┼─────────→ 型システムの表現力

@@ -1,4 +1,4 @@
-# HSOS - Haskell Operating System
+# LOS - Lambda Operating System
 
 λ計算を理論的基盤とした新しいOS設計パラダイムを探求するプロジェクト。
 

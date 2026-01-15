@@ -6,7 +6,7 @@ paginate: true
 
 # 理論的基盤
 
-HSOSを支える4つの核心概念
+LOSを支える4つの核心概念
 
 ---
 
@@ -676,11 +676,11 @@ Session Types
 
 ---
 
-# HSOSが目指す統合
+# LOSが目指す統合
 
 ```
 ┌─────────────────────────────────────────────┐
-│            HSOS Architecture                 │
+│            LOS Architecture                 │
 ├─────────────────────────────────────────────┤
 │  Algebraic Effects  → OSサービスの抽象化    │
 │  Linear Types       → リソース管理の安全性  │

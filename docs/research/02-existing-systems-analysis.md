@@ -1,6 +1,6 @@
 # 既存システム・研究の分析
 
-型安全性や形式検証を重視したOS設計の既存研究を分析し、HSOSへの示唆を導く。
+型安全性や形式検証を重視したOS設計の既存研究を分析し、LOSへの示唆を導く。
 
 ---
 
@@ -97,7 +97,7 @@ contract FileContract {
 
 SingularityはMidoriプロジェクトへ発展。一時期、Microsoftの自然言語検索サービス（西海岸・アジア）で稼働していた。
 
-### HSOSへの示唆
+### LOSへの示唆
 
 **学び**:
 - 型安全性だけでソフトウェア隔離が可能
@@ -106,7 +106,7 @@ SingularityはMidoriプロジェクトへ発展。一時期、Microsoftの自然
 
 **課題**:
 - 「型安全だけでは十分でない」場合がある
-- HSOSでは、型安全＋**形式検証可能性**を両立させたい
+- LOSでは、型安全＋**形式検証可能性**を両立させたい
 
 ---
 
@@ -189,7 +189,7 @@ handleSyscall (Recv ep) state = ...
 - ❌ 実装言語（C）と証明言語（Isabelle）の分離
 - ❌ 仕様変更時の証明更新コスト
 
-### HSOSへの示唆
+### LOSへの示唆
 
 **学び**:
 - 「証明可能 ≠ 証明しやすい」
@@ -197,7 +197,7 @@ handleSyscall (Recv ep) state = ...
 - **Haskellの実行可能仕様**は非常に有用
 - 最初から証明を意識した言語設計が重要
 
-**HSOSでのアプローチ**:
+**LOSでのアプローチ**:
 - Haskellで書く = seL4の「実行可能仕様」に相当
 - 純粋関数ベース → 証明が容易
 - 証明ツール（LiquidHaskell等）との連携
@@ -223,7 +223,7 @@ handleSyscall (Recv ep) state = ...
 - "First-order Laziness" (ICFP'25)
 - "The Functional Essence of Binary Search Trees" (PLDI'24)
 
-**HSOSへの示唆**:
+**LOSへの示唆**:
 - カーネルレベルでも代数的効果が使える可能性
 - Cへのコンパイル技術は参考になる
 
@@ -301,7 +301,7 @@ newtype StateC s m a = StateC { runStateC :: s -> m (s, a) }
 - 最近の高性能効果ライブラリ
 - GHCの最適化と親和性が高い
 
-### HSOSへの示唆
+### LOSへの示唆
 
 Haskellでも代数的効果相当の機能は利用可能。
 ライブラリ選定が重要（パフォーマンス、使いやすさのトレードオフ）。
@@ -317,9 +317,9 @@ Haskellでも代数的効果相当の機能は利用可能。
 | Singularity | 型安全 | メモリ安全、プロトコル遵守 | Sing# |
 | seL4 | 形式検証 | 機能的正確性、情報フロー | C + Isabelle |
 | Koka | 代数的効果 | 効果の追跡・合成 | Koka |
-| HSOS (目標) | 型安全 + 証明可能 | 上記すべて | Haskell |
+| LOS (目標) | 型安全 + 証明可能 | 上記すべて | Haskell |
 
-### HSOSの位置づけ
+### LOSの位置づけ
 
 ```
                     証明の厳密さ
@@ -327,7 +327,7 @@ Haskellでも代数的効果相当の機能は利用可能。
                          │
           seL4 ●         │
                          │
-                         │        ● HSOS (目標)
+                         │        ● LOS (目標)
                          │
        Singularity ●     │
                          │
@@ -337,7 +337,7 @@ Haskellでも代数的効果相当の機能は利用可能。
                          │
 ```
 
-### HSOSが目指すもの
+### LOSが目指すもの
 
 1. **Singularityの型安全性** + **seL4の証明可能性**
 2. **Kokaの代数的効果** + **Haskellの成熟したエコシステム**

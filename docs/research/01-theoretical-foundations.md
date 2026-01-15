@@ -1,6 +1,6 @@
 # 理論的基盤: 型理論とOS設計
 
-HSOSの設計を支える4つの核心概念について解説する。
+LOSの設計を支える4つの核心概念について解説する。
 
 ---
 
@@ -686,7 +686,7 @@ type NetworkDriverProtocol = Rec x. Offer [
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                        HSOS Type System                      │
+│                        LOS Type System                      │
 ├─────────────────────────────────────────────────────────────┤
 │                                                              │
 │  Pure Functions                                              │
@@ -720,7 +720,7 @@ type NetworkDriverProtocol = Rec x. Offer [
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│                    HSOS Architecture                 │
+│                    LOS Architecture                 │
 ├─────────────────────────────────────────────────────┤
 │  Algebraic Effects  → OSサービスの抽象化            │
 │  Linear Types       → リソース管理の安全性          │

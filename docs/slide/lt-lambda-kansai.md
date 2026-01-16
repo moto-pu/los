@@ -10,6 +10,26 @@ paginate: true
 
 λ Kansai LT
 
+もと
+
+---
+
+# 自己紹介
+
+- **年齢**: 0x33歳
+- **所属**: 株式会社ポテンシャルユナイテッド
+- **来歴**: TCP屋 → 組み込み屋 → Web屋
+- **嗜好**: Haskell、PureScript が好き。数学わなびー。
+
+**GitHub**:
+- 個人: github.com/motoyak/
+- 会社: github.com/moto-pu/
+
+**近況**
+- AIエージェント開発と静的型付け純粋型関数型言語は相性いい実感
+- いまやCCがあるので、社内にHaskell物をちりばめても問題ない ←
+
+
 ---
 
 # 今日話すこと

@@ -39,7 +39,9 @@ module LOS.Effect.Core
     , send
       -- * Effect Composition
     , type (:<)
-    , type (:<<)
+      -- * Internal (for handlers)
+    , Union(..)
+    , decomp
     ) where
 
 import Data.Kind (Type)
@@ -103,3 +105,8 @@ send eff = Impure (inj eff) Pure
 run :: Eff '[] a -> a
 run (Pure a) = a
 run (Impure _ _) = error "Impossible: no effects to handle"
+
+-- | Decompose a union: is it this effect or another?
+decomp :: Union (eff ': effs) a -> Either (Union effs a) (eff a)
+decomp (Here x)  = Right x
+decomp (There u) = Left u

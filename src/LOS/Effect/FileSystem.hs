@@ -1,7 +1,7 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE LambdaCase #-}
 
 {-|
 Module      : LOS.Effect.FileSystem
@@ -20,7 +20,6 @@ This enables:
 module LOS.Effect.FileSystem
     ( -- * Effect Type
       FileSystem(..)
-    , FilePath
       -- * Smart Constructors
     , readFile
     , writeFile
@@ -28,13 +27,11 @@ module LOS.Effect.FileSystem
     , doesFileExist
     , listDirectory
       -- * Handlers
-    , runFileSystemIO
     , runFileSystemPure
+    , VirtualFS
     ) where
 
-import Prelude hiding (readFile, writeFile, appendFile)
-import qualified System.IO as IO
-import qualified System.Directory as Dir
+import Prelude hiding (readFile, writeFile, appendFile, FilePath)
 import qualified Data.Map.Strict as Map
 import Data.Map.Strict (Map)
 import LOS.Effect.Core
@@ -69,32 +66,6 @@ doesFileExist path = send (DoesFileExist path)
 listDirectory :: Member FileSystem effs => FilePath -> Eff effs [FilePath]
 listDirectory path = send (ListDirectory path)
 
--- | Handle FileSystem effect with real I/O.
-runFileSystemIO :: Eff (FileSystem ': effs) a -> Eff effs (IO a)
-runFileSystemIO = \case
-    Pure a -> Pure (pure a)
-    Impure u k -> case decomp u of
-        Right (ReadFile path) -> Pure $ do
-            content <- IO.readFile path
-            runEffIO $ runFileSystemIO (k content)
-        Right (WriteFile path content) -> Pure $ do
-            IO.writeFile path content
-            runEffIO $ runFileSystemIO (k ())
-        Right (AppendFile path content) -> Pure $ do
-            IO.appendFile path content
-            runEffIO $ runFileSystemIO (k ())
-        Right (DoesFileExist path) -> Pure $ do
-            exists <- Dir.doesFileExist path
-            runEffIO $ runFileSystemIO (k exists)
-        Right (ListDirectory path) -> Pure $ do
-            files <- Dir.listDirectory path
-            runEffIO $ runFileSystemIO (k files)
-        Left u' -> Impure u' (\x -> runFileSystemIO (k x))
-
-runEffIO :: Eff '[] (IO a) -> IO a
-runEffIO (Pure io) = io
-runEffIO _ = error "Impossible"
-
 -- | In-memory filesystem for testing.
 type VirtualFS = Map FilePath String
 
@@ -128,8 +99,3 @@ runFileSystemPure fs = go fs
         Right (ListDirectory _) ->
             go vfs (k (Map.keys vfs))  -- Simplified: return all files
         Left u' -> Impure u' (\x -> go vfs (k x))
-
--- | Decompose a union.
-decomp :: Union (eff ': effs) a -> Either (Union effs a) (eff a)
-decomp (Here x)  = Right x
-decomp (There u) = Left u

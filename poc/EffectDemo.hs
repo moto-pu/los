@@ -67,11 +67,13 @@ countingGreet = do
     name <- getLine
     countedPutLine ("Hello, " ++ name ++ "!")
     count <- get
-    countedPutLine ("Total lines printed: " ++ show count)
+    countedPutLine ("Total lines printed: " ++ show (count :: Int))
   where
+    countedPutLine :: (Member Console effs, Member (State Int) effs)
+                   => String -> Eff effs ()
     countedPutLine s = do
         putLine s
-        modify (+1)
+        modify (+ (1 :: Int))
 
 -- ============================================================
 -- Example 3: File Operations with Testing
@@ -107,8 +109,6 @@ testCountingGreet = run $ runConsolePure ["Bob"] $ runState 0 countingGreet
 
 -- | Test configGreet with virtual filesystem.
 testConfigGreet :: ([String], (VirtualFS, ()))
-  where
-    type VirtualFS = Map.Map FilePath String
 testConfigGreet = run $ runConsolePure ["Charlie"]
                       $ runFileSystemPure initialFS
                       $ configGreet
@@ -140,8 +140,8 @@ main = do
     putStrLn "3. Testing configGreet with virtual filesystem:"
     putStrLn "   Initial FS: {\"config.txt\": \"Greetings\"}"
     putStrLn "   Input: [\"Charlie\"]"
-    -- Note: testConfigGreet has a type annotation issue, simplified here
-    putStrLn "   (See source for full example)"
+    let (output3, (_, _)) = testConfigGreet
+    mapM_ (\s -> putStrLn $ "   > " ++ s) output3
     putStrLn ""
 
     putStrLn "=== Key Insights ==="

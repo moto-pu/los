@@ -1,7 +1,7 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE LambdaCase #-}
 
 {-|
 Module      : LOS.Effect.Console
@@ -27,12 +27,10 @@ module LOS.Effect.Console
     , getLine
     , putStr
       -- * Handlers
-    , runConsoleIO
     , runConsolePure
     ) where
 
 import Prelude hiding (getLine, putStr)
-import qualified System.IO as IO
 import LOS.Effect.Core
 
 -- | Console effect: terminal input/output operations.
@@ -56,37 +54,13 @@ getLine = send GetLine
 putStr :: Member Console effs => String -> Eff effs ()
 putStr s = send (PutStr s)
 
--- | Handle Console effect by performing real I/O.
---
--- This is the "production" handler that actually does I/O.
-runConsoleIO :: Eff (Console ': effs) a -> Eff effs (IO a)
-runConsoleIO = \case
-    Pure a -> Pure (pure a)
-    Impure u k -> case decomp u of
-        Right (PutLine s) -> do
-            rest <- runConsoleIO (k ())
-            Pure $ IO.putStrLn s >> rest
-        Right GetLine -> do
-            Pure $ do
-                s <- IO.getLine
-                runEffIO $ runConsoleIO (k s)
-        Right (PutStr s) -> do
-            rest <- runConsoleIO (k ())
-            Pure $ IO.putStr s >> rest
-        Left u' -> Impure u' (\x -> runConsoleIO (k x))
-
--- Helper to run IO from Eff
-runEffIO :: Eff '[] (IO a) -> IO a
-runEffIO (Pure io) = io
-runEffIO _ = error "Impossible"
-
 -- | Handle Console effect purely with predefined input.
 --
 -- This is a "test" handler that uses a list of strings as input
 -- and collects all output.
 --
 -- @
--- let (output, result) = runConsolePure ["Alice"] $ do
+-- let (output, result) = run $ runConsolePure ["Alice"] $ do
 --         putLine "Name?"
 --         name <- getLine
 --         putLine ("Hello " ++ name)
@@ -107,8 +81,3 @@ runConsolePure inputs = go inputs []
             []     -> error "runConsolePure: no more input"
             (i:is) -> go is out (k i)
         Left u' -> Impure u' (\x -> go inp out (k x))
-
--- | Decompose a union: is it this effect or another?
-decomp :: Union (eff ': effs) a -> Either (Union effs a) (eff a)
-decomp (Here x)  = Right x
-decomp (There u) = Left u

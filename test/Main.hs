@@ -1,9 +1,11 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Main where
 
-import Prelude hiding (getLine)
+import Prelude hiding (getLine, readFile, writeFile, appendFile)
 import qualified Data.Map.Strict as Map
 import LOS.Effect.Core
 import LOS.Effect.Console
@@ -17,7 +19,8 @@ test name passed = putStrLn $ (if passed then "✓ " else "✗ ") ++ name
 -- | Test: Pure console effect
 testConsole :: Bool
 testConsole =
-    let program = do
+    let program :: Member Console effs => Eff effs ()
+        program = do
             putLine "Hello"
             name <- getLine
             putLine ("Hi " ++ name)
@@ -27,27 +30,28 @@ testConsole =
 -- | Test: State effect
 testState :: Bool
 testState =
-    let program = do
+    let program :: Eff '[State Int] Int
+        program = do
             put (10 :: Int)
-            modify (+5)
+            modify (+ (5 :: Int))
             get
-        (finalState, result) = run $ runState 0 program
+        (finalState, result) = run $ runState (0 :: Int) program
     in finalState == 15 && result == 15
 
 -- | Test: Combined effects (Console + State)
 testCombined :: Bool
 testCombined =
-    let program :: (Member Console effs, Member (State Int) effs) => Eff effs Int
+    let program :: Eff '[State Int, Console] Int
         program = do
             putLine "Start"
             put (1 :: Int)
             putLine "Middle"
-            modify (+1)
+            modify (+ (1 :: Int))
             putLine "End"
             get
         -- Handle State first, then Console
         (output, (finalState, result)) =
-            run $ runConsolePure [] $ runState 0 program
+            run $ runConsolePure [] $ runState (0 :: Int) program
     in output == ["Start", "Middle", "End"]
        && finalState == 2
        && result == 2
@@ -56,6 +60,7 @@ testCombined =
 testFileSystem :: Bool
 testFileSystem =
     let initialFS = Map.fromList [("test.txt", "Hello")]
+        program :: Eff '[FileSystem] String
         program = do
             content <- readFile "test.txt"
             writeFile "output.txt" (content ++ " World")

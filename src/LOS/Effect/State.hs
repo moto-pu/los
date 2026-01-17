@@ -1,5 +1,6 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE LambdaCase #-}
 
@@ -66,8 +67,3 @@ evalState s eff = snd <$> runState s eff
 -- | Handle State effect, returning only the final state.
 execState :: s -> Eff (State s ': effs) a -> Eff effs s
 execState s eff = fst <$> runState s eff
-
--- | Decompose a union.
-decomp :: Union (eff ': effs) a -> Either (Union effs a) (eff a)
-decomp (Here x)  = Right x
-decomp (There u) = Left u

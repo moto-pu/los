@@ -1,0 +1,52 @@
+cabal-version:      3.0
+name:               los
+version:            0.1.0.0
+synopsis:           Lambda Operating System - Effect System PoC
+description:        A proof-of-concept for an OS built on lambda calculus principles,
+                    featuring an algebraic effect system for composable, testable I/O.
+license:            BSD-3-Clause
+license-file:       LICENSE
+author:             LOS Project
+maintainer:         los@example.com
+category:           System
+build-type:         Simple
+
+common warnings
+    ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates
+                 -Wincomplete-uni-patterns -Wmissing-export-lists
+                 -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+
+library
+    import:           warnings
+    exposed-modules:
+        LOS.Effect.Core
+        LOS.Effect.Console
+        LOS.Effect.FileSystem
+        LOS.Effect.State
+    build-depends:
+        base ^>=4.17 || ^>=4.18 || ^>=4.19 || ^>=4.20,
+        containers ^>=0.6 || ^>=0.7,
+        directory ^>=1.3
+    hs-source-dirs:   src
+    default-language: GHC2021
+
+executable effect-demo
+    import:           warnings
+    main-is:          EffectDemo.hs
+    build-depends:
+        base,
+        los,
+        containers
+    hs-source-dirs:   poc
+    default-language: GHC2021
+
+test-suite los-test
+    import:           warnings
+    type:             exitcode-stdio-1.0
+    main-is:          Main.hs
+    hs-source-dirs:   test
+    build-depends:
+        base,
+        los,
+        containers
+    default-language: GHC2021
